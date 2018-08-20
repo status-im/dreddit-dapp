@@ -41,7 +41,7 @@ if (b == Ballot.UPVOTE) {
 } else {
     p.downvotes++;
 }
-l.voters[msg.sender] = b;
+p.voters[msg.sender] = b;
 ```
 
 3. Emit the event
