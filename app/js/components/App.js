@@ -22,8 +22,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // TODO: Invoke the next function as soon as Embark is ready
-    this._loadPosts();
+    // Invoke `this._loadPosts()` as soon as Embark is ready
+    EmbarkJS.onReady(() => {
+      this._loadPosts();
+  });
   }
 
   _toggleForm = () => {
@@ -36,19 +38,14 @@ class App extends Component {
   }
 
   _loadPosts = async () => {
-    // TODO: Using the functions `post` and `numPost` from our contract, load the posts
+    const {posts, numPosts} = DReddit.methods;
 
     let list = [];
 
-    const total = 1; // TODO: Use 
+    const total = await numPosts().call();
     if(total > 0){
         for (let i = 0; i < total; i++) {
-
-            // TODO: the constant `currentPost` should have the info that comes from the `post` function of the contract.
-            //       this object here is just a placeholder.
-            const currentPost = {
-              upvotes: 0, downvotes: 0, owner: "0x1234567890123456789012345678901234567890", creationDate: "153399", description: "0x00"
-            }; 
+            const currentPost = posts(i).call();
             list.push(currentPost);
         }
 

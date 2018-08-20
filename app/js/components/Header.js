@@ -69,9 +69,9 @@ class Header extends Component {
                 style={{
                   margin: '10px 10px',
                   maxWidth: 280
-                }}
+                }} 
                 onChange={(searchValue) => search(searchValue)}
-              />
+               />
               <Button color="inherit" onClick={toggleForm}>
                 <AddIcon />
               </Button>
