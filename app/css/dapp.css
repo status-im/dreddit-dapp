@@ -7,3 +7,20 @@ body {
 p {
     font-size: 14px;
 }
+
+input.fieldError {
+    color: #f44336;
+}
+
+span.fieldError {
+    color: #f44336;
+    margin: 0;
+    font-size: 0.75rem;
+    text-align: left;
+    margin-top: 8px;
+    min-height: 1em;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    line-height: 1em;
+    display: block;
+    margin-bottom: 10px;
+}

@@ -9,14 +9,11 @@ import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import UpvoteIcon from '@material-ui/icons/ExpandLess';
 import dateformat from 'dateformat';
-import markdownJS from "markdown";
 import {withStyles} from '@material-ui/core/styles';
 
 import EmbarkJS from 'Embark/EmbarkJS';
 import DReddit from 'Embark/contracts/DReddit';
 import web3 from 'Embark/web3';
-
-const markdown = markdownJS.markdown;
 
 const styles = theme => ({
     actions: {
@@ -45,11 +42,10 @@ const ballot = {
     DOWNVOTE: 2
 };
 
-const contains = (filterBy, content, title, date, owner) => {
+const contains = (filterBy, title, date, owner) => {
     filterBy = filterBy.trim().toLowerCase();
     if(filterBy == '') return true;
-    return  content.toLowerCase().indexOf(filterBy) > -1 || 
-            title.toLowerCase().indexOf(filterBy) > -1 || 
+    return  title.toLowerCase().indexOf(filterBy) > -1 || 
             date.indexOf(filterBy) > -1 || 
             owner.toLowerCase().indexOf(filterBy) > -1;
 };
@@ -61,7 +57,7 @@ class Post extends Component {
 
         this.state = {
             title: '',
-            content: '',
+            image: '',
             isSubmitting: false,
             canVote: true,
             upvotes: props.upvotes,
@@ -85,14 +81,14 @@ class Post extends Component {
         const jsonContent = JSON.parse(ipfsText);
         
         const title = jsonContent.title;
-        const content = jsonContent.content;
+        const image = EmbarkJS.Storage.getUrl(jsonContent.image);
 
         // Determine if the current account can vote or not
         const canVote = await DReddit.methods.canVote(this.props.id).call();
 
         this.setState({
             title,
-            content,
+            image,
             canVote
         });
     }
@@ -120,15 +116,14 @@ class Post extends Component {
     }
 
     render(){
-        const {title, content, upvotes, downvotes, isSubmitting, canVote} = this.state;
+        const {title, image, upvotes, downvotes, isSubmitting, canVote} = this.state;
         const {creationDate, classes, owner, filterBy} = this.props;
         const disabled = isSubmitting || !canVote;
         const formattedDate = dateformat(new Date(creationDate * 1000), "yyyy-mm-dd HH:MM:ss");
-        const mdText = markdown.toHTML(content);
 
-        const display = contains(filterBy, content, title, formattedDate, owner);
+        const display = contains(filterBy, title, formattedDate, owner);
 
-        return display&& <Card className={classes.card}>
+        return display && <Card className={classes.card}>
             <CardHeader title={owner} subheader={formattedDate}
                 avatar={
                     <Blockies seed={owner} size={7} scale={5} />
@@ -142,7 +137,7 @@ class Post extends Component {
                 <Typography variant="title"  className={classes.title}  gutterBottom>
                 {title}
                 </Typography>
-                <Typography component="div" dangerouslySetInnerHTML={{__html: mdText}} />
+                <img src={image} />
             </CardContent>
             <CardActions disableActionSpacing>
                 <IconButton className={classes.actions} disabled={disabled} onClick={this._vote(ballot.UPVOTE)}>

@@ -61,7 +61,7 @@ class Header extends Component {
             <Toolbar className={classes.toolBar}>
               <Hidden smDown>
                 <Typography variant="display1" color="inherit" className={classes.flex}>
-                DReddit
+                T-Shirt Design Contest
                 </Typography>
               </Hidden>
               <SearchBar
