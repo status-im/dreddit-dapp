@@ -64,7 +64,6 @@ const post = posts(i).call();
 
 ###### `Post.js`
 
-```
 1. Edit `_loadAttributes`. Obtain the post from IPFS
 ```
  const ipfsText = await EmbarkJS.Storage.get(ipfsHash);
