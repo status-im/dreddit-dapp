@@ -3,7 +3,7 @@
 ### Intro
 In this workshop, we'll explore how can we use Embark to simplify the development of a decentralised Reddit dApp (or DReddit). We will use the code-generated contract object, `DReddit`, and the `EmbarkJS` API to interact with our Ethereum smart contract and store image files on the decentralized filesystem `IPFS`.
 
-The final code for this dApp can be found in the [DappCon Workshop dAppp repository](https://github.com/status-im/dappcon-workshop-dapp/blob/master/instructions/1%20Installation.md), however we be using the [`start-here` branch](https://github.com/status-im/dappcon-workshop-dapp/tree/start-here) as a starting point for our workshop. This branch contains some "missing" code that we will be adding together in this workshop.
+The final code for this dApp can be found in the [repository](https://github.com/status-im/dreddit-dapp/blob/master/instructions/1%20Installation.md), however we be using the [`start-here` branch](https://github.com/status-im/dreddit-dapp/tree/start-here) as a starting point for our workshop. This branch contains some "missing" code that we will be adding together in this workshop.
 
 This dApp uses [React](https://reactjs.org/), but is out of scope for this workshop, so don't worry, we will only be focussing on the pieces that Embark helps us build. In reality, any JS framework can be used with Embark.
 

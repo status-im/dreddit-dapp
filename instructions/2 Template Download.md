@@ -8,7 +8,7 @@ We will leverage Embark’s featureset to write our contract, write unit tests f
 Clone the DReddit template into your dApp folder:
 ```
 cd [parent folder] (ie ~/dev/__github)
-git clone https://github.com/status-im/dappcon-workshop-dapp
+git clone https://github.com/status-im/dreddit-dapp
 cd dappcon-workshop-dapp
 git checkout start-here
 ```
