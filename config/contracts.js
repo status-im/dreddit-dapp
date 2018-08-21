@@ -37,5 +37,13 @@ module.exports = {
       //  args: [ 100 ]
       //}
     }
-  }  
+  },
+  "testnet": {
+    dappConnection: ["$WEB3"],
+        accounts: [
+          {
+            privateKey: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef" // <-- Use your PK
+          }
+      ]
+  }
 };
