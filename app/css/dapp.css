@@ -24,3 +24,8 @@ span.fieldError {
     display: block;
     margin-bottom: 10px;
 }
+
+div.tshirt {
+    max-width: 385px;
+    max-height: 385px;
+}

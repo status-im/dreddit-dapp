@@ -17,11 +17,20 @@ class App extends Component {
       'list': [],
       'sortBy': 'age',
       'sortOrder': 'desc',
-      'filterBy': ''
+      'filterBy': '',
+      'votes': 0,
+      'canVote': true
     };
   }
 
   componentDidMount() {
+    const storedVotes = localStorage.getItem('votes');
+    const votes = !storedVotes || isNaN(storedVotes) ? 0 : parseInt(localStorage.getItem('votes'), 10);
+    this.setState({
+      votes,
+      canVote: votes < 3
+    });
+
     // Invoke `this._loadPosts()` as soon as Embark is ready
     EmbarkJS.onReady(() => {
       this._loadPosts();
@@ -30,6 +39,17 @@ class App extends Component {
 
   _toggleForm = () => {
     this.setState({displayForm: !this.state.displayForm});
+  }
+
+  _updateVotes = (vote) => {
+    let votes = this.state.votes;
+    votes += vote;
+
+    localStorage.setItem('votes', votes);
+    this.setState({
+      votes,
+      canVote: votes < 3
+    });
   }
 
   _setSortOrder = (sortBy) => {
@@ -66,7 +86,7 @@ class App extends Component {
   }
 
   render() {
-    const {displayForm, list, sortBy, sortOrder, filterBy} = this.state;
+    const {displayForm, list, sortBy, sortOrder, filterBy, canVote} = this.state;
 
     let orderedList;
     if(sortBy == 'rating'){
@@ -78,7 +98,7 @@ class App extends Component {
     return (<Fragment>
         <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
         { displayForm && <Create afterPublish={this._loadPosts} /> }
-        { orderedList.map((record) => <Post key={record.id} {...record} filterBy={filterBy} />) }
+        { orderedList.map((record) => <Post key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={canVote} />) }
         </Fragment>
     );
   }

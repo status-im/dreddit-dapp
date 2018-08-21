@@ -1,15 +1,14 @@
-import {Card, CardActions, CardContent, CardHeader} from '@material-ui/core';
+import {Card, CardContent, CardHeader} from '@material-ui/core';
 import React, {Component} from 'react';
-import Blockies from 'react-blockies';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import DownvoteIcon from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Image from 'material-ui-image';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import UpvoteIcon from '@material-ui/icons/ExpandLess';
-import dateformat from 'dateformat';
 import {withStyles} from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 
 import EmbarkJS from 'Embark/EmbarkJS';
 import DReddit from 'Embark/contracts/DReddit';
@@ -42,12 +41,10 @@ const ballot = {
     DOWNVOTE: 2
 };
 
-const contains = (filterBy, title, date, owner) => {
+const contains = (filterBy, title) => {
     filterBy = filterBy.trim().toLowerCase();
     if(filterBy == '') return true;
-    return  title.toLowerCase().indexOf(filterBy) > -1 || 
-            date.indexOf(filterBy) > -1 || 
-            owner.toLowerCase().indexOf(filterBy) > -1;
+    return  title.toLowerCase().indexOf(filterBy) > -1;
 };
 
 class Post extends Component {
@@ -95,16 +92,8 @@ class Post extends Component {
 
     _vote = choice => async event => {
         event.preventDefault();
-        this.setState({isSubmitting: true});
-
-        // Estimate the cost of invoking the function `vote` from the contract
-        const {vote} = DReddit.methods;
-        const toSend = vote(this.props.id, choice);
-        const estimatedGas = await toSend.estimateGas();
-
-        // Send the transaction
-        const receipt = await toSend.send({gas: estimatedGas + 1000});
-        console.log(receipt);
+       
+        this.props.updateVotes(1);
 
         this.setState({
             canVote: false,
@@ -117,39 +106,34 @@ class Post extends Component {
 
     render(){
         const {title, image, upvotes, downvotes, isSubmitting, canVote} = this.state;
-        const {creationDate, classes, owner, filterBy} = this.props;
-        const disabled = isSubmitting || !canVote;
-        const formattedDate = dateformat(new Date(creationDate * 1000), "yyyy-mm-dd HH:MM:ss");
+        const {classes, filterBy, votingEnabled} = this.props;
+        const disabled = !votingEnabled || isSubmitting || !canVote;
 
-        const display = contains(filterBy, title, formattedDate, owner);
+
+        const score = upvotes - downvotes;
+        const display = contains(filterBy, title);
 
         return display && <Card className={classes.card}>
-            <CardHeader title={owner} subheader={formattedDate}
-                avatar={
-                    <Blockies seed={owner} size={7} scale={5} />
-                }
-                action={
-                <IconButton>
-                    <MoreVertIcon />
-                </IconButton>
-              } />
+            <CardHeader title={title} />
             <CardContent>
-                <Typography variant="title"  className={classes.title}  gutterBottom>
-                {title}
-                </Typography>
-                <img src={image} />
+                <Grid container spacing={24}>
+                    <Grid item xs={1}>
+                        <IconButton className={classes.actions} disabled={disabled} onClick={this._vote(ballot.UPVOTE)}>
+                            <UpvoteIcon />
+                        </IconButton>
+                        <Typography variant="display1" style={{textAlign: 'center', width: 48}}>{ score }</Typography>
+                        <IconButton className={classes.actions} disabled={disabled} onClick={this._vote(ballot.DOWNVOTE)}>
+                            <DownvoteIcon />
+                        </IconButton>
+                        { isSubmitting && <CircularProgress size={14} className={classes.spinner} /> }
+                    </Grid>
+                    <Grid item xs={11}>
+                        <div className="tshirt">
+                            <Image src={image} />
+                        </div>
+                    </Grid>
+                </Grid>               
             </CardContent>
-            <CardActions disableActionSpacing>
-                <IconButton className={classes.actions} disabled={disabled} onClick={this._vote(ballot.UPVOTE)}>
-                <UpvoteIcon />
-                {upvotes}
-                </IconButton>
-                <IconButton className={classes.actions} disabled={disabled} onClick={this._vote(ballot.DOWNVOTE)}>
-                <DownvoteIcon />
-                {downvotes}
-                </IconButton>
-                { isSubmitting && <CircularProgress size={14} className={classes.spinner} /> }
-          </CardActions>
         </Card>;
     }
     
@@ -163,7 +147,9 @@ Post.propTypes = {
     id: PropTypes.number.isRequired,
     owner: PropTypes.string.isRequired,
     creationDate: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired
+    description: PropTypes.string.isRequired,
+    updateVotes: PropTypes.func.isRequired,
+    votingEnabled: PropTypes.bool.isRequired
   };
   
 
