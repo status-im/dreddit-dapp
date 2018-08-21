@@ -22,6 +22,7 @@ const styles = {
   };
 
 const options = [
+ 'Sort randomly',
  'Sort by age',
  'Sort by rating'
 ];
@@ -43,7 +44,7 @@ class Header extends Component {
   handleMenuClick = index => event => {
     event.preventDefault();
     this.setState({selectedIndex: index, anchorEl: null});
-    this.props.sortOrder(index == 0 ? 'age' : 'rating');
+    this.props.sortOrder(index == 0 ? 'random': (index == 1 ? 'age' : 'rating'));
   };
 
   handleClose = () => {
@@ -85,7 +86,7 @@ class Header extends Component {
                 onClose={this.handleClose}
                 PaperProps={{
                   style: {
-                    width: 200
+                    width: 150
                   }
                 }}>
                 {options.map((option, i) => (

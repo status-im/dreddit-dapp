@@ -15,7 +15,7 @@ class App extends Component {
     this.state = {
       'displayForm': false,
       'list': [],
-      'sortBy': 'age',
+      'sortBy': 'random',
       'sortOrder': 'desc',
       'filterBy': '',
       'votes': 0,
@@ -91,8 +91,10 @@ class App extends Component {
     let orderedList;
     if(sortBy == 'rating'){
       orderedList = _.orderBy(list, [function(o) { return o.upvotes - o.downvotes; }, 'creationDate'], [sortOrder, sortOrder]);
-    } else {
+    } else if(sortBy == 'age') {
       orderedList = _.orderBy(list, 'creationDate', sortOrder);
+    } else {
+      orderedList = _.shuffle(list);
     }
 
     return (<Fragment>
