@@ -105,8 +105,10 @@ class Post extends Component {
             score: this.state.score + choice
         });
 
+        // TODO: instead of web3, obtain the account
+
         const ipfsHash = web3.utils.toAscii(this.props.description);
-        const response = await axios.post(config.server + '/vote', {id: ipfsHash, account: 0x123, selection: choice});
+        const response = await axios.post(config.server + '/vote', {id: ipfsHash, account: web3.eth.defaultAccount, selection: choice});
         console.log(response);
 
         this.props.updateVotes(this.props.id);
