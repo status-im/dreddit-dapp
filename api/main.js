@@ -23,12 +23,19 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
                     error: err
                 });
             } else {
-                console.log(document);
-                res.status(200)
+                if(document.length === 0){
+                    res.status(500)
+                    .send({
+                        success: false,
+                        error: "TShirt doesn't exist"
+                    });
+                } else {
+                    res.status(200)
                     .send({
                         success: true,
-                        tshirt: document
+                        score: document[0].score
                     });
+                }
             }
         });
     });
@@ -106,6 +113,13 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
 
     const app = express();
     const port = process.env.PORT || 3000;
+
+
+    app.use(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    });
 
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(bodyParser.json());

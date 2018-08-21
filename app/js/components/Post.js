@@ -9,7 +9,8 @@ import Typography from '@material-ui/core/Typography';
 import UpvoteIcon from '@material-ui/icons/ExpandLess';
 import {withStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-
+import axios from 'axios';
+import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
 import DReddit from 'Embark/contracts/DReddit';
 import web3 from 'Embark/web3';
@@ -55,6 +56,7 @@ class Post extends Component {
         this.state = {
             title: '',
             image: '',
+            score: props.score,
             isSubmitting: false,
             canVote: true,
             upvotes: props.upvotes,
@@ -92,25 +94,31 @@ class Post extends Component {
 
     _vote = choice => async event => {
         event.preventDefault();
-       
-        this.props.updateVotes(1);
+
+        choice = choice == ballot.UPVOTE ? 1 : -1;
+
+        this.setState({isSubmitting: true});
+
 
         this.setState({
             canVote: false,
-            upvotes: this.state.upvotes + (choice == ballot.UPVOTE ? 1 : 0),
-            downvotes: this.state.downvotes + (choice == ballot.DOWNVOTE ? 1 : 0)
+            score: this.state.score + choice
         });
+
+        const ipfsHash = web3.utils.toAscii(this.props.description);
+        const response = await axios.post(config.server + '/vote', {id: ipfsHash, account: 0x123, selection: choice});
+        console.log(response);
+
+        this.props.updateVotes(this.props.id);
 
         this.setState({isSubmitting: false});
     }
 
     render(){
-        const {title, image, upvotes, downvotes, isSubmitting, canVote} = this.state;
+        const {title, image, isSubmitting, canVote, score} = this.state;
         const {classes, filterBy, votingEnabled} = this.props;
         const disabled = !votingEnabled || isSubmitting || !canVote;
 
-
-        const score = upvotes - downvotes;
         const display = contains(filterBy, title);
 
         return display && <Card className={classes.card}>
@@ -141,6 +149,7 @@ class Post extends Component {
 
 Post.propTypes = {
     filterBy: PropTypes.string,
+    score: PropTypes.number,
     upvotes: PropTypes.number.isRequired,
     downvotes: PropTypes.number.isRequired,
     classes: PropTypes.object.isRequired,

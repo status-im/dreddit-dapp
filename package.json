@@ -4,14 +4,14 @@
   "description": "",
   "scripts": {
     "test": "embark test",
-    "start": "nodemon api/main.js --exec babel-node",
+    "start": "nodemon api/main.js --exec babel-node --presets=es2015,stage-2",
     "build": "babel src -d server-dist",
     "serve": "node server-dist/main.js"
   },
   "author": "",
   "license": "MIT",
   "homepage": "",
-  "devDependencies": {
+  "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.6",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -27,12 +27,11 @@
     "eslint-plugin-standard": "^3.1.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
-    "nodemon": "^1.18.3"
-  },
-  "dependencies": {
+    "nodemon": "^1.18.3",
     "@material-ui/core": "^1.4.3",
     "@material-ui/icons": "^2.0.1",
     "@material-ui/lab": "^1.0.0-alpha.9",
+    "axios": "^0.18.0",
     "dateformat": "^3.0.3",
     "eslint-plugin-react": "^7.10.0",
     "lodash": "^4.17.10",

@@ -3,10 +3,11 @@ import Create from './Create';
 import Header from './Header';
 import Post from './Post';
 import _ from 'lodash';
-
+import axios from 'axios';
+import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
 import DReddit from 'Embark/contracts/DReddit';
-
+import web3 from 'Embark/web3';
 class App extends Component {
 
   constructor(props) {
@@ -15,7 +16,7 @@ class App extends Component {
     this.state = {
       'displayForm': false,
       'list': [],
-      'sortBy': 'random',
+      'sortBy': 'rating',
       'sortOrder': 'desc',
       'filterBy': '',
       'votes': 0,
@@ -25,10 +26,17 @@ class App extends Component {
 
   componentDidMount() {
     const storedVotes = localStorage.getItem('votes');
-    const votes = !storedVotes || isNaN(storedVotes) ? 0 : parseInt(localStorage.getItem('votes'), 10);
+    let votes = [];
+    try {
+      votes = JSON.parse(storedVotes);
+      votes = votes ? votes : [];
+    } catch (err){ 
+      console.log("Couldn't parse votes");
+    }
+
     this.setState({
       votes,
-      canVote: votes < 3
+      canVote: votes.length < 3
     });
 
     // Invoke `this._loadPosts()` as soon as Embark is ready
@@ -43,12 +51,13 @@ class App extends Component {
 
   _updateVotes = (vote) => {
     let votes = this.state.votes;
-    votes += vote;
+    votes.push(vote);
 
-    localStorage.setItem('votes', votes);
+    localStorage.setItem('votes', JSON.stringify(votes));
+
     this.setState({
       votes,
-      canVote: votes < 3
+      canVote: votes.length < 3
     });
   }
 
@@ -74,10 +83,30 @@ class App extends Component {
                       value.id = index; 
                       value.upvotes = parseInt(value.upvotes, 10);
                       value.downvotes = parseInt(value.downvotes, 10);
+
                       return value; 
-                    });
+        });
+
+        let scores = [];
+        for(let i = 0; i < total; i++){
+          const desc = web3.utils.toAscii(list[i].description);
+          try {
+            const currScore = await axios.get(config.server + '/score/' + desc);
+            scores.push(currScore);
+          } catch (err){
+            console.log("Couldn't load score for shirt: " + desc);
+          }
+        }
+
+        for(let i = 0; i < total; i++){
+          if(scores[i].data && scores[i].data.success) {
+            list[i].score = scores[i].data.score;
+          } else {
+            list[i].score = 0;
+          }
+        }          
     }
-    
+
     this.setState({list});
   }
 
@@ -86,7 +115,7 @@ class App extends Component {
   }
 
   render() {
-    const {displayForm, list, sortBy, sortOrder, filterBy, canVote} = this.state;
+    const {displayForm, list, sortBy, sortOrder, filterBy, canVote, votes} = this.state;
 
     let orderedList;
     if(sortBy == 'rating'){
@@ -100,7 +129,7 @@ class App extends Component {
     return (<Fragment>
         <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
         { displayForm && <Create afterPublish={this._loadPosts} /> }
-        { orderedList.map((record) => <Post key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={canVote} />) }
+        { orderedList.map((record) => <Post key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={!votes.includes(record.id) && canVote} />) }
         </Fragment>
     );
   }

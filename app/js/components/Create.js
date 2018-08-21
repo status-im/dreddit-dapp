@@ -6,7 +6,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
-
+import axios from 'axios';
+import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
 import DReddit from 'Embark/contracts/DReddit';
 import web3 from 'Embark/web3';
@@ -69,6 +70,9 @@ class Create extends Component{
     // Save the previous object in IPFS
     const ipfsHash = await EmbarkJS.Storage.saveText(JSON.stringify(textToSave));
 
+    // Create the picture in DB
+    const response = await axios.post(config.server + '/tshirt', {id: ipfsHash});
+
     // Estimate gas required to invoke the `create` function from the contract
     const {create} = DReddit.methods;    
     const toSend = await create(web3.utils.toHex(ipfsHash));
@@ -78,8 +82,6 @@ class Create extends Component{
     const receipt = await toSend.send({from: web3.eth.defaultAccount, 
                                        gas: estimatedGas + 1000});
     
-    console.log(receipt);
-
     document.getElementById("fileUpload").value = null;
 
     this.setState({
