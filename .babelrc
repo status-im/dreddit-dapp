@@ -3,10 +3,11 @@
       "transform-object-rest-spread"
     ],
     "presets": [
-      "stage-2"
+      "stage-2",
+      "es2015"
     ],
     "ignore": [
       "config/",
       "node_modules"
     ]
-  }
+}
