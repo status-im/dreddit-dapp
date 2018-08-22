@@ -22,7 +22,7 @@ const styles = theme => ({
       display: 'flex'
     },
     card: {
-      margin: theme.spacing.unit * 6,
+      margin: theme.spacing.unit * 2,
       marginTop: theme.spacing.unit * 4,
       position: 'relative'
     },
@@ -127,7 +127,7 @@ class Post extends Component {
             <CardHeader title={title} />
             <CardContent>
                 <Grid container spacing={24}>
-                    <Grid item xs={1}>
+                    <Grid item xs={2}>
                         <IconButton className={classes.actions} disabled={disabled} onClick={this._vote(ballot.UPVOTE)}>
                             <UpvoteIcon />
                         </IconButton>
@@ -137,7 +137,7 @@ class Post extends Component {
                         </IconButton>
                         { isSubmitting && <CircularProgress size={14} className={classes.spinner} /> }
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={10}>
                         <div className="tshirt">
                             <Image src={image} />
                         </div>
@@ -152,8 +152,6 @@ class Post extends Component {
 Post.propTypes = {
     filterBy: PropTypes.string,
     score: PropTypes.number,
-    upvotes: PropTypes.number.isRequired,
-    downvotes: PropTypes.number.isRequired,
     classes: PropTypes.object.isRequired,
     id: PropTypes.number.isRequired,
     owner: PropTypes.string.isRequired,

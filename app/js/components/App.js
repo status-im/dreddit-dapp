@@ -16,7 +16,7 @@ class App extends Component {
     this.state = {
       'displayForm': false,
       'list': [],
-      'sortBy': 'rating',
+      'sortBy': 'age',
       'sortOrder': 'desc',
       'filterBy': '',
       'votes': 0,
@@ -25,22 +25,20 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const storedVotes = localStorage.getItem('votes');
-    let votes = [];
-    try {
-      votes = JSON.parse(storedVotes);
-      votes = votes ? votes : [];
-    } catch (err){ 
-      console.log("Couldn't parse votes");
-    }
-
-    this.setState({
-      votes,
-      canVote: votes.length < 3
-    });
-
-    // Invoke `this._loadPosts()` as soon as Embark is ready
     EmbarkJS.onReady(() => {
+
+
+      axios.get(config.server + '/votes/' + web3.eth.defaultAccount)
+      .then(response => {
+        if(response.data.success){
+          const votes = response.data.votes;
+          this.setState({
+            votes,
+            canVote: votes.length < 3
+          });
+        }
+      });
+  
       this._loadPosts();
   });
   }
@@ -81,9 +79,7 @@ class App extends Component {
         list = await Promise.all(list);
         list = list.map((value, index) => { 
                       value.id = index; 
-                      value.upvotes = parseInt(value.upvotes, 10);
-                      value.downvotes = parseInt(value.downvotes, 10);
-
+                      value.hash = web3.utils.toAscii(value.description);
                       return value; 
         });
 
@@ -104,8 +100,8 @@ class App extends Component {
           } else {
             list[i].score = 0;
           }
-        }          
-    }
+        }   
+      }
 
     this.setState({list});
   }
@@ -119,7 +115,7 @@ class App extends Component {
 
     let orderedList;
     if(sortBy == 'rating'){
-      orderedList = _.orderBy(list, [function(o) { return o.upvotes - o.downvotes; }, 'creationDate'], [sortOrder, sortOrder]);
+      orderedList = _.orderBy(list, [function(o) { return o.score; }, 'creationDate'], [sortOrder, sortOrder]);
     } else if(sortBy == 'age') {
       orderedList = _.orderBy(list, 'creationDate', sortOrder);
     } else {
@@ -129,7 +125,7 @@ class App extends Component {
     return (<Fragment>
         <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
         { displayForm && <Create afterPublish={this._loadPosts} /> }
-        { orderedList.map((record) => <Post key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={!votes.includes(record.id) && canVote} />) }
+        { orderedList.map((record) => <Post key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={!votes.includes(record.hash) && canVote} />) }
         </Fragment>
     );
   }
