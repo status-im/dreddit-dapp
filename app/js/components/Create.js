@@ -9,8 +9,6 @@ import {withStyles} from '@material-ui/core/styles';
 import axios from 'axios';
 import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
-import DReddit from 'Embark/contracts/DReddit';
-import web3 from 'Embark/web3';
 
 const styles = theme => ({
   textField: {
@@ -41,7 +39,6 @@ class Create extends Component{
 
     this.setState({'error': '', 'uploadError': ''});
 
-
     const errorState = {};
     if(this.state.title.trim() === ''){
       errorState.error = 'Required field';
@@ -71,17 +68,8 @@ class Create extends Component{
     const ipfsHash = await EmbarkJS.Storage.saveText(JSON.stringify(textToSave));
 
     // Create the picture in DB
-    const response = await axios.post(config.server + '/tshirt', {id: ipfsHash});
+    await axios.post(config.server + '/tshirt', {id: ipfsHash});
 
-    // Estimate gas required to invoke the `create` function from the contract
-    const {create} = DReddit.methods;    
-    const toSend = await create(web3.utils.toHex(ipfsHash));
-    const estimatedGas = await toSend.estimateGas();
-
-    // Send the transaction
-    const receipt = await toSend.send({from: web3.eth.defaultAccount, 
-                                       gas: estimatedGas + 1000});
-    
     document.getElementById("fileUpload").value = null;
 
     this.setState({

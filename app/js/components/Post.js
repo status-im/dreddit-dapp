@@ -12,8 +12,6 @@ import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
-import DReddit from 'Embark/contracts/DReddit';
-import web3 from 'Embark/web3';
 
 const styles = theme => ({
     actions: {
@@ -58,9 +56,7 @@ class Post extends Component {
             image: '',
             score: props.score,
             isSubmitting: false,
-            canVote: true,
-            upvotes: props.upvotes,
-            downvotes: props.downvotes
+            canVote: true
         };
     }
 
@@ -71,7 +67,7 @@ class Post extends Component {
     }
 
     _loadAttributes = async () => {
-        const ipfsHash = web3.utils.toAscii(this.props.description);
+        const ipfsHash = this.props.hash;
 
         // Obtain the content from IPFS using the `ipfsHash` variable
         const ipfsText = await EmbarkJS.Storage.get(ipfsHash);
@@ -82,13 +78,9 @@ class Post extends Component {
         const title = jsonContent.title;
         const image = EmbarkJS.Storage.getUrl(jsonContent.image);
 
-        // Determine if the current account can vote or not
-        const canVote = await DReddit.methods.canVote(this.props.id).call();
-
         this.setState({
             title,
-            image,
-            canVote
+            image
         });
     }
 
@@ -105,11 +97,8 @@ class Post extends Component {
             score: this.state.score + choice
         });
 
-        // TODO: instead of web3, obtain the account
-
-        const ipfsHash = web3.utils.toAscii(this.props.description);
-        const response = await axios.post(config.server + '/vote', {id: ipfsHash, account: web3.eth.defaultAccount, selection: choice});
-        console.log(response);
+        const ipfsHash = this.props.hash;
+        await axios.post(config.server + '/vote', {id: ipfsHash, account: this.props.account, selection: choice});
 
         this.props.updateVotes(this.props.id);
 
@@ -151,12 +140,11 @@ class Post extends Component {
 
 Post.propTypes = {
     filterBy: PropTypes.string,
+    account: PropTypes.string,
     score: PropTypes.number,
     classes: PropTypes.object.isRequired,
-    id: PropTypes.number.isRequired,
-    owner: PropTypes.string.isRequired,
-    creationDate: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    hash: PropTypes.string.isRequired,
     updateVotes: PropTypes.func.isRequired,
     votingEnabled: PropTypes.bool.isRequired
   };

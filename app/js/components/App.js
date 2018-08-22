@@ -6,8 +6,8 @@ import _ from 'lodash';
 import axios from 'axios';
 import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
-import DReddit from 'Embark/contracts/DReddit';
 import web3 from 'Embark/web3';
+
 class App extends Component {
 
   constructor(props) {
@@ -19,27 +19,35 @@ class App extends Component {
       'sortBy': 'age',
       'sortOrder': 'desc',
       'filterBy': '',
-      'votes': 0,
-      'canVote': true
+      'votes': [],
+      'canVote': true,
+      'account': ''
     };
   }
 
   componentDidMount() {
     EmbarkJS.onReady(() => {
-
-
-      axios.get(config.server + '/votes/' + web3.eth.defaultAccount)
-      .then(response => {
-        if(response.data.success){
-          const votes = response.data.votes;
-          this.setState({
-            votes,
-            canVote: votes.length < 3
-          });
+      // TODO: obtain account from status_api
+      /*
+      window.addEventListener('message', (event) => {
+        if (!event.data || !event.data.type) { return; }
+        if (event.data.type === 'STATUS_API_SUCCESS') {
+            //console.log(event.data.permissions) //=> ["CONTACT_CODE"] if allowed , and [] if not allowed
+            this.setState({account: STATUS_API["CONTACT_CODE"]});
         }
       });
-  
+      // request status API
+      setTimeout(
+        () => { window.postMessage({ type: 'STATUS_API_REQUEST', permissions: ["CONTACT_CODE"]}, '*'); },
+        1000
+      );
+      */
+
+      // If not using api, use web3
+      this.setState({account: web3.eth.defaultAccount});
+
       this._loadPosts();
+      this._loadVotes();
   });
   }
 
@@ -64,44 +72,29 @@ class App extends Component {
     this.setState({sortBy, sortOrder});
   }
 
-  _loadPosts = async () => {
-    const {posts, numPosts} = DReddit.methods;
+  _loadVotes = async () => {
+    const response = await axios.get(config.server + '/votes/' + this.state.account);
+    if(response.data.success){
+      const votes = response.data.votes;
+      this.setState({
+        votes,
+        canVote: votes.length < 3
+      });
+    }
+  }
 
+  _loadPosts = async () => {
     let list = [];
 
-    const total = await numPosts().call();
-    if(total > 0){
-        for (let i = 0; i < total; i++) {
-            const currentPost = posts(i).call();
-            list.push(currentPost);
-        }
-
-        list = await Promise.all(list);
-        list = list.map((value, index) => { 
-                      value.id = index; 
-                      value.hash = web3.utils.toAscii(value.description);
-                      return value; 
-        });
-
-        let scores = [];
-        for(let i = 0; i < total; i++){
-          const desc = web3.utils.toAscii(list[i].description);
-          try {
-            const currScore = await axios.get(config.server + '/score/' + desc);
-            scores.push(currScore);
-          } catch (err){
-            console.log("Couldn't load score for shirt: " + desc);
-          }
-        }
-
-        for(let i = 0; i < total; i++){
-          if(scores[i].data && scores[i].data.success) {
-            list[i].score = scores[i].data.score;
-          } else {
-            list[i].score = 0;
-          }
-        }   
-      }
+    const response = await axios.get(config.server + '/tshirts/');
+    if(response.data.success){
+      list = response.data.votes
+              .map((value) => { 
+                value.hash = value.id; // TODO: change id on db to hash.
+                value.id = value._id; 
+              return value; 
+              });
+    }
 
     this.setState({list});
   }
@@ -111,7 +104,7 @@ class App extends Component {
   }
 
   render() {
-    const {displayForm, list, sortBy, sortOrder, filterBy, canVote, votes} = this.state;
+    const {displayForm, list, sortBy, sortOrder, filterBy, canVote, votes, account} = this.state;
 
     let orderedList;
     if(sortBy == 'rating'){
@@ -125,7 +118,7 @@ class App extends Component {
     return (<Fragment>
         <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
         { displayForm && <Create afterPublish={this._loadPosts} /> }
-        { orderedList.map((record) => <Post key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={!votes.includes(record.hash) && canVote} />) }
+        { orderedList.map((record) => <Post account={account} key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={!votes.includes(record.hash) && canVote} />) }
         </Fragment>
     );
   }
