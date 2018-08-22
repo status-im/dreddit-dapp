@@ -67,8 +67,8 @@ class Header extends Component {
               <SearchBar
                 placeholder="Search..."
                 style={{
-                  margin: '10px 10px',
-                  maxWidth: 280
+                  marginTop: '10px',
+                  marginBottom: '10px'
                 }} 
                 onChange={(searchValue) => search(searchValue)}
                />

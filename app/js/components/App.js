@@ -124,7 +124,7 @@ class App extends Component {
         <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
         { displayForm && <Create afterPublish={this._loadPosts} /> }
         { !account && <SnackbarContent message="This DApp requires CONTACT_CODE permission from the Status app to enable voting" /> }
-        { orderedList.length == 0 && <Typography variant="display2" style={{marginTop: 30, textAlign: 'center'}}>
+        { orderedList.length == 0 && <Typography variant="display1" style={{marginTop: 40, textAlign: 'center'}}>
           Loading items... <CircularProgress />
         </Typography> }
         { orderedList.map((record) => <Post account={account} key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={account !== null && !votes.includes(record.hash) && canVote} />) }

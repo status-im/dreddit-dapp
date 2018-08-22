@@ -12,6 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
+import web3 from 'Embark/web3';
 
 const styles = theme => ({
     actions: {
@@ -98,7 +99,7 @@ class Post extends Component {
         });
 
         const ipfsHash = this.props.hash;
-        await axios.post(config.server + '/vote', {id: ipfsHash, account: this.props.account, selection: choice});
+        await axios.post(config.server + '/vote', {id: ipfsHash, account: this.props.account, wallet: web3.eth.defaultAccount, selection: choice});
 
         this.props.updateVotes(this.props.id);
 

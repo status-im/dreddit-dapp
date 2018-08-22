@@ -57,7 +57,7 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
                         {'id': vote.id},
                         {
                             '$inc': {score: choice},
-                            '$push': {'votes': {'account': vote.account, choice}}
+                            '$push': {'votes': {'account': vote.account, wallet: vote.wallet, choice}}
                         },
                         (err) => {
                             if(err){
