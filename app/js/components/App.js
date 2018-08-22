@@ -8,6 +8,8 @@ import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
 import web3 from 'Embark/web3';
 
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+
 class App extends Component {
 
   constructor(props) {
@@ -20,31 +22,31 @@ class App extends Component {
       'sortOrder': 'desc',
       'filterBy': '',
       'votes': [],
-      'canVote': true,
-      'account': ''
+      'canVote': false,
+      'account': null
     };
   }
 
   componentDidMount() {
-    EmbarkJS.onReady(() => {
-      // TODO: obtain account from status_api
-      /*
+    EmbarkJS.onReady(() => {  
       window.addEventListener('message', (event) => {
         if (!event.data || !event.data.type) { return; }
         if (event.data.type === 'STATUS_API_SUCCESS') {
             //console.log(event.data.permissions) //=> ["CONTACT_CODE"] if allowed , and [] if not allowed
             this.setState({account: STATUS_API["CONTACT_CODE"]});
+            this._loadVotes();
         }
       });
       // request status API
       setTimeout(
         () => { window.postMessage({ type: 'STATUS_API_REQUEST', permissions: ["CONTACT_CODE"]}, '*'); },
-        1000
+        500
       );
-      */
-
+      
       // If not using api, use web3
-      this.setState({account: web3.eth.defaultAccount});
+      /*setTimeout(() => {
+       this.setState({account: web3.eth.defaultAccount});
+      }, 2000);*/
 
       this._loadPosts();
       this._loadVotes();
@@ -73,6 +75,8 @@ class App extends Component {
   }
 
   _loadVotes = async () => {
+    if(!this.state.account) return;
+
     const response = await axios.get(config.server + '/votes/' + this.state.account);
     if(response.data.success){
       const votes = response.data.votes;
@@ -118,7 +122,8 @@ class App extends Component {
     return (<Fragment>
         <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
         { displayForm && <Create afterPublish={this._loadPosts} /> }
-        { orderedList.map((record) => <Post account={account} key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={!votes.includes(record.hash) && canVote} />) }
+        { !account && <SnackbarContent message="This DApp requires CONTACT_CODE permission from the Status app to enable voting" /> }
+        { orderedList.map((record) => <Post account={account} key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={account !== null && !votes.includes(record.hash) && canVote} />) }
         </Fragment>
     );
   }
