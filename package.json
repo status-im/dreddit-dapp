@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "embark test",
-    "start": "nodemon api/main.js --exec babel-node --presets=es2015,stage-2",
+    "start": "nodemon --watch api api/main.js --exec babel-node --presets=es2015,stage-2",
     "build": "babel src -d server-dist",
     "serve": "node server-dist/main.js"
   },
