@@ -13,34 +13,6 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
     const collection = db.collection('tshirts');
 
     const router = express.Router();
-    router.get('/score/:tshirt', (req, res) => {
-        const params = req.params;
-        collection.find({id: params.tshirt})
-          .project({score: 1})
-          .toArray((err, document) => {
-            if(err){
-                res.status(500)
-                .send({
-                    success: false,
-                    error: err
-                });
-            } else {
-                if(document.length === 0){
-                    res.status(500)
-                    .send({
-                        success: false,
-                        error: "TShirt doesn't exist"
-                    });
-                } else {
-                    res.status(200)
-                    .send({
-                        success: true,
-                        score: document[0].score
-                    });
-                }
-            }
-        });
-    });
 
     router.get('/votes/:account', (req, res) => {
         const params = req.params;
@@ -111,6 +83,26 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
                 }
             }
         });
+    });
+
+    router.get('/tshirts', (req, res) => {
+        collection.find()
+            .project({id: 1, score: 1})
+            .toArray((err, document) => {
+                if(err){
+                    res.status(500)
+                    .send({
+                        success: false,
+                        error: err
+                    });
+                } else {
+                    res.status(200)
+                        .send({
+                            success: true,
+                            votes: document
+                        });
+                    }
+            });
     });
 
     router.post('/tshirt', (req, res) => {
