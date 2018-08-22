@@ -1,3 +1,3 @@
 export default {
-    'server': 'http://localhost:3000'
+    'server': 'https://tshirts.status.im'
 };

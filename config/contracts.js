@@ -42,7 +42,7 @@ module.exports = {
     dappConnection: ["$WEB3"],
         accounts: [
           {
-            privateKey: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef" // <-- Use your PK
+            privateKey: "71DB9B832BF457B4D812D6D6D673A02A1A2F5F687DBF59A2E41302A43459153C" // <-- Use your PK
           }
       ]
   }
