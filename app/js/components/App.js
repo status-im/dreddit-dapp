@@ -7,7 +7,8 @@ import axios from 'axios';
 import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
 import web3 from 'Embark/web3';
-
+import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 class App extends Component {
@@ -46,7 +47,7 @@ class App extends Component {
       // If not using api, use web3
       /*setTimeout(() => {
        this.setState({account: web3.eth.defaultAccount});
-      }, 2000);*/
+      }, 500);*/
 
       this._loadPosts();
       this._loadVotes();
@@ -123,6 +124,9 @@ class App extends Component {
         <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
         { displayForm && <Create afterPublish={this._loadPosts} /> }
         { !account && <SnackbarContent message="This DApp requires CONTACT_CODE permission from the Status app to enable voting" /> }
+        { orderedList.length == 0 && <Typography variant="display2" style={{marginTop: 30, textAlign: 'center'}}>
+          Loading items... <CircularProgress />
+        </Typography> }
         { orderedList.map((record) => <Post account={account} key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={account !== null && !votes.includes(record.hash) && canVote} />) }
         </Fragment>
     );
