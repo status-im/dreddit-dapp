@@ -59,16 +59,8 @@ class Create extends Component{
 
     const imageHash = await EmbarkJS.Storage.uploadFile(this.state.fileToUpload);
 
-    const textToSave = {
-      'title': this.state.title,
-      'image': imageHash
-    };
-
-    // Save the previous object in IPFS
-    const ipfsHash = await EmbarkJS.Storage.saveText(JSON.stringify(textToSave));
-
     // Create the picture in DB
-    await axios.post(config.server + '/tshirt', {id: ipfsHash});
+    await axios.post(config.server + '/tshirt', {id: imageHash, title: this.state.title});
 
     document.getElementById("fileUpload").value = null;
 

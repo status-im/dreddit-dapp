@@ -61,30 +61,6 @@ class Post extends Component {
         };
     }
 
-    componentDidMount(){
-        EmbarkJS.onReady(() => {
-            this._loadAttributes();
-        });
-    }
-
-    _loadAttributes = async () => {
-        const ipfsHash = this.props.hash;
-
-        // Obtain the content from IPFS using the `ipfsHash` variable
-        const ipfsText = await EmbarkJS.Storage.get(ipfsHash);
-        
-        // Data Obtained from IPFS
-        const jsonContent = JSON.parse(ipfsText);
-        
-        const title = jsonContent.title;
-        const image = EmbarkJS.Storage.getUrl(jsonContent.image);
-
-        this.setState({
-            title,
-            image
-        });
-    }
-
     _vote = choice => async event => {
         event.preventDefault();
 
@@ -107,10 +83,10 @@ class Post extends Component {
     }
 
     render(){
-        const {title, image, isSubmitting, canVote, score} = this.state;
-        const {classes, filterBy, votingEnabled} = this.props;
+        const {isSubmitting, canVote, score} = this.state;
+        const {classes, filterBy, votingEnabled, title, hash} = this.props;
         const disabled = !votingEnabled || isSubmitting || !canVote;
-
+        const image = EmbarkJS.Storage.getUrl(hash);
         const display = contains(filterBy, title);
 
         return display && <Card className={classes.card}>
@@ -132,7 +108,7 @@ class Post extends Component {
                             <Image src={image} />
                         </div>
                     </Grid>
-                </Grid>               
+                </Grid>
             </CardContent>
         </Card>;
     }
@@ -145,6 +121,7 @@ Post.propTypes = {
     score: PropTypes.number,
     classes: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
     hash: PropTypes.string.isRequired,
     updateVotes: PropTypes.func.isRequired,
     votingEnabled: PropTypes.bool.isRequired
