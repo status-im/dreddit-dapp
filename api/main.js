@@ -1,12 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {MongoClient} from 'mongodb';
+import config from './config';
 
-const connString = 'mongodb://142.93.161.125:27017';
-const maxVotes = 3;
-
-
-MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
+MongoClient.connect(config.connString, {useNewUrlParser:true}, function (err, client) {
     if (err) throw err;
 
     const db = client.db('tshirts');
@@ -52,7 +49,7 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
                     error: err
                 });
             } else {
-                if(result.length == 0 || result[0].sum < maxVotes){
+                if(result.length == 0 || result[0].sum < config.maxVotes){
                     collection.updateOne(
                         {'id': vote.id},
                         {
@@ -107,6 +104,16 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
 
     router.post('/tshirt', (req, res) => {
         const tshirt = req.body;
+
+        if(!config.managers.includes(tshirt.account)){
+            res.status(500)
+            .send({
+                success: false,
+                error: "Invalid account"
+            });
+            return;
+        }
+
         collection.insertOne({
                 id: tshirt.id,
                 title: tshirt.title,
