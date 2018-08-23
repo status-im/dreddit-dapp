@@ -89,7 +89,6 @@ MongoClient.connect(config.connString, {useNewUrlParser:true}, function (err, cl
                 success: true,
                 result: config.managers.includes(params.account)
             });
-        }
     });
 
     router.get('/tshirts', (req, res) => {
