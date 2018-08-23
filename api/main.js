@@ -87,7 +87,7 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
 
     router.get('/tshirts', (req, res) => {
         collection.find()
-            .project({id: 1, score: 1})
+            .project({id: 1, title: 1, score: 1})
             .toArray((err, document) => {
                 if(err){
                     res.status(500)
@@ -109,6 +109,7 @@ MongoClient.connect(connString, {useNewUrlParser:true}, function (err, client) {
         const tshirt = req.body;
         collection.insertOne({
                 id: tshirt.id,
+                title: tshirt.title,
                 score: 0,
                 votes: []
             }, (err) => {
