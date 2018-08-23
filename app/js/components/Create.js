@@ -60,7 +60,7 @@ class Create extends Component{
     const imageHash = await EmbarkJS.Storage.uploadFile(this.state.fileToUpload);
 
     // Create the picture in DB
-    await axios.post(config.server + '/tshirt', {id: imageHash, title: this.state.title});
+    await axios.post(config.server + '/tshirt', {id: imageHash, title: this.state.title, account: this.props.account});
 
     document.getElementById("fileUpload").value = null;
 
@@ -122,7 +122,9 @@ class Create extends Component{
 
 Create.propTypes = {
   classes: PropTypes.object.isRequired,
-  afterPublish: PropTypes.func.isRequired
+  afterPublish: PropTypes.func.isRequired,
+  account: PropTypes.any
+
 };
 
 export default withStyles(styles)(Create);

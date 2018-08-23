@@ -7,9 +7,20 @@ import axios from 'axios';
 import config from '../config';
 import EmbarkJS from 'Embark/EmbarkJS';
 import web3 from 'Embark/web3';
+import PropTypes from 'prop-types';
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
+import {withStyles} from '@material-ui/core/styles';
+
+const styles = theme => ({
+fab: {
+  position: 'fixed',
+  bottom: theme.spacing.unit * 3,
+  right: theme.spacing.unit * 3
+}
+});
 
 class App extends Component {
 
@@ -24,7 +35,8 @@ class App extends Component {
       'filterBy': '',
       'votes': [],
       'canVote': false,
-      'account': null
+      'account': null,
+      'isManager': false
     };
   }
 
@@ -33,22 +45,22 @@ class App extends Component {
       window.addEventListener('message', (event) => {
         if (!event.data || !event.data.type) { return; }
         if (event.data.type === 'STATUS_API_SUCCESS') {
-            //console.log(event.data.permissions) //=> ["CONTACT_CODE"] if allowed , and [] if not allowed
             this.setState({account: STATUS_API["CONTACT_CODE"]});
             this._loadVotes();
+            this._isManager();
         }
       });
+
       // request status API
       setTimeout(
-        () => { window.postMessage({ type: 'STATUS_API_REQUEST', permissions: ["CONTACT_CODE"]}, '*'); },
-        500
+        () => { 
+          window.postMessage({type: 'STATUS_API_REQUEST', permissions: ["CONTACT_CODE"]}, '*'); 
+        }, 500
       );
       
       // If not using api, use web3
-      /*setTimeout(() => {
-       this.setState({account: web3.eth.defaultAccount});
-      }, 500);*/
-
+      //this.setState({account: web3.eth.defaultAccount});
+      this._isManager();
       this._loadPosts();
       this._loadVotes();
   });
@@ -88,6 +100,17 @@ class App extends Component {
     }
   }
 
+  _isManager = async () => {
+    if(!this.state.account) return;
+
+    const response = await axios.get(config.server + '/isManager/' + this.state.account);
+    if(response.data.result){
+      this.setState({
+        isManager: true
+      });
+    }
+  }
+
   _loadPosts = async () => {
     let list = [];
 
@@ -109,7 +132,8 @@ class App extends Component {
   }
 
   render() {
-    const {displayForm, list, sortBy, sortOrder, filterBy, canVote, votes, account} = this.state;
+    const {displayForm, list, sortBy, sortOrder, filterBy, canVote, votes, account, isManager} = this.state;
+    const {classes} = this.props;
 
     let orderedList;
     if(sortBy == 'rating'){
@@ -121,16 +145,23 @@ class App extends Component {
     }
 
     return (<Fragment>
-        <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
-        { displayForm && <Create afterPublish={this._loadPosts} /> }
+        <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} isManager={isManager} />
+        { displayForm && <Create account={account} afterPublish={this._loadPosts} /> }
         { !account && <SnackbarContent message="This DApp requires CONTACT_CODE permission from the Status app to enable voting" /> }
         { orderedList.length == 0 && <Typography variant="display1" style={{marginTop: 40, textAlign: 'center'}}>
           Loading items... <CircularProgress />
         </Typography> }
         { orderedList.map((record) => <Post account={account} key={record.id} {...record} filterBy={filterBy} updateVotes={this._updateVotes} votingEnabled={account !== null && !votes.includes(record.hash) && canVote} />) }
+        <Button variant="contained" color="secondary" disabled={!canVote || account === null || votes.length >= 3} className={classes.fab}>
+        {!canVote || account === null ? 0 : (3 - votes.length)} vote(s) available
+        </Button>
         </Fragment>
     );
   }
 }
 
-export default App;
+App.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default withStyles(styles)(App);

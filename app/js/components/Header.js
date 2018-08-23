@@ -51,7 +51,7 @@ class Header extends Component {
   };
 
   render(){
-    const {classes, toggleForm, search} = this.props;
+    const {classes, toggleForm, search, isManager} = this.props;
     const {anchorEl, sortIndex} = this.state;
     const open = Boolean(anchorEl);
 
@@ -72,9 +72,10 @@ class Header extends Component {
                 }} 
                 onChange={(searchValue) => search(searchValue)}
                />
-              <Button color="inherit" onClick={toggleForm}>
+              { isManager && <Button color="inherit" onClick={toggleForm}>
                 <AddIcon />
               </Button>
+              }
               <Button color="inherit" onClick={this.handleClick}>
                 <MoreVertIcon />
               </Button>
@@ -105,7 +106,8 @@ Header.propTypes = {
   classes: PropTypes.object.isRequired,
   toggleForm: PropTypes.func.isRequired,
   sortOrder: PropTypes.func.isRequired,
-  search: PropTypes.func.isRequired
+  search: PropTypes.func.isRequired,
+  isManager: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles)(Header);
