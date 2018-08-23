@@ -12,7 +12,7 @@ cd dreddit-dapp
 git checkout ethberlin
 npm install
 ```
-2. If you want to change the DB server connection string, edit `./api/main.js`
+2. If you want to change the DB server connection string or accounts that can upload tshirts, edit `./api/config.js`
 
 3. Build the service with `npm run-script build`
 
