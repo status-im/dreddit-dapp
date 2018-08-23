@@ -82,6 +82,16 @@ MongoClient.connect(config.connString, {useNewUrlParser:true}, function (err, cl
         });
     });
 
+    router.get('/isManager/:account', (req, res) => {
+        const params = req.params;
+        res.status(200)
+            .send({
+                success: true,
+                result: config.managers.includes(params.account)
+            });
+        }
+    });
+
     router.get('/tshirts', (req, res) => {
         collection.find()
             .project({id: 1, title: 1, score: 1})
