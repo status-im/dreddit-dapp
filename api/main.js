@@ -11,6 +11,10 @@ MongoClient.connect(config.connString, {useNewUrlParser:true}, function (err, cl
 
     const router = express.Router();
 
+    router.get('/', (req, res) => {
+        res.redirect(config.dappUrl);
+    });
+
     router.get('/votes/:account', (req, res) => {
         const params = req.params;
 
