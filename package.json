@@ -6,7 +6,9 @@
     "test": "embark test",
     "start": "nodemon --watch api api/main.js --exec babel-node --presets=es2015,stage-2",
     "build": "babel  --presets=es2015,stage-2 api -d server-dist",
-    "serve": "node server-dist/main.js"
+    "serve": "node server-dist/main.js",
+    "uglify": "uglifyjs ./dist/js/dapp.js -c -m -o ./dist/js/dapp.min.js; rm ./dist/js/dapp.js; mv ./dist/js/dapp.min.js dist/js/dapp.js",
+    "upload": "ipfs add -r ./dist"
   },
   "author": "",
   "license": "MIT",
@@ -29,18 +31,19 @@
     "nodemon": "^1.18.3"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.3",
     "@material-ui/core": "^1.4.3",
     "@material-ui/icons": "^2.0.1",
     "@material-ui/lab": "^1.0.0-alpha.9",
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "dateformat": "^3.0.3",
+    "express": "^4.16.3",
     "lodash": "^4.17.10",
     "material-ui-image": "^3.0.0",
     "material-ui-search-bar": "^1.0.0-beta.9",
     "mongodb": "^3.1.3",
     "react": "^16.4.2",
-    "react-dom": "^16.4.2"
+    "react-dom": "^16.4.2",
+    "uglify-es": "^3.3.9"
   }
 }

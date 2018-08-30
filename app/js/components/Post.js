@@ -61,7 +61,7 @@ class Post extends Component {
         };
     }
 
-    _vote = choice => async event => {
+    _vote = async (event, choice) => {
         event.preventDefault();
 
         choice = choice == ballot.UPVOTE ? 1 : -1;
@@ -94,11 +94,11 @@ class Post extends Component {
             <CardContent>
                 <Grid container spacing={24}>
                     <Grid item xs={2}>
-                        <IconButton className={classes.actions} disabled={disabled} onClick={this._vote(ballot.UPVOTE)}>
+                        <IconButton className={classes.actions} disabled={disabled} onClick={(event) => this._vote(event, ballot.UPVOTE)}>
                             <UpvoteIcon />
                         </IconButton>
                         <Typography variant="display1" style={{textAlign: 'center', width: 48}}>{ score }</Typography>
-                        <IconButton className={classes.actions} disabled={disabled} onClick={this._vote(ballot.DOWNVOTE)}>
+                        <IconButton className={classes.actions} disabled={disabled} onClick={(event) => this._vote(event, ballot.DOWNVOTE)}>
                             <DownvoteIcon />
                         </IconButton>
                         { isSubmitting && <CircularProgress size={14} className={classes.spinner} /> }

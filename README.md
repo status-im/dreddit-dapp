@@ -37,3 +37,20 @@ npm install
 
 3. `embark run`
 
+### Uploading
+At the moment it needs to be done manually to avoid having large files. Embark 2.0 will provide options to compress the size of javascript files via webpack configuration. 
+
+
+1. Start `embark blockchain testnet` and `ipfs daemon` in a different terminal session
+
+```
+embark build testnet
+npm run-script uglify
+npm run-script upload
+```
+Using the hash returned by ipfs, edit `./api/config.js` to set the DApp URL.
+Access the URL in a browser and then pin it to infura.
+```
+curl "https://ipfs.infura.io:5001/api/v0/pin/add?arg=YOUR_IPFS_FOLDER_HASH_HERE&recursive=true"
+```
+You can also access the public list of gateways in https://ipfs.github.io/public-gateway-checker/ , browse the same hash on all the online gateways, to guarantee having more nodes in the network containing your files. (This could be automated with wget)
