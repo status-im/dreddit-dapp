@@ -42,10 +42,10 @@ class App extends Component {
 
   componentDidMount() {
     EmbarkJS.onReady(() => {  
-      window.addEventListener('message', (event) => {
-        if (!event.data || !event.data.type) { return; }
-        if (event.data.type === 'STATUS_API_SUCCESS') {
-            this.setState({account: STATUS_API["CONTACT_CODE"]});
+      window.addEventListener('statusapi', (event) => {
+        if (!event.detail || !event.detail.permissions) { return; }
+        if(event.detail.permissions.includes("CONTACT_CODE")){
+          this.setState({account: event.detail.data["CONTACT_CODE"]});
             this._loadVotes();
             this._isManager();
         }
