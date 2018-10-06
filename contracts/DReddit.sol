@@ -34,9 +34,8 @@ contract DReddit {
         public
         view
         returns(uint)
-    {
-        // TODO: 
-        return 1;
+    { 
+        return posts.length;
     }
 
     // @notice Create Post
@@ -65,7 +64,6 @@ contract DReddit {
         returns (bool)
     {
         // TODO:
-        return true;
     }
 
     // @notice Obtain vote for specific post
@@ -77,7 +75,6 @@ contract DReddit {
         returns (uint8)
     {
         // TODO:
-        return 1;
     }
 
 }
