@@ -23,7 +23,6 @@ class App extends Component {
 
   componentDidMount() {
     // TODO: Invoke the next function as soon as Embark is ready
-    this._loadPosts();
   }
 
   _toggleForm = () => {
@@ -40,12 +39,14 @@ class App extends Component {
 
     let list = [];
 
-    const total = 1; // TODO: Use 
+    // TODO: replace by using `numPosts` to obtain the number of posts our contract has in storage:
+    const total = 1;
+    
     if(total > 0){
         for (let i = 0; i < total; i++) {
 
             // TODO: the constant `currentPost` should have the info that comes from the `post` function of the contract.
-            //       this object here is just a placeholder.
+            //       Replace this object with the code in the instructions as it just a placeholder.
             const currentPost = {
               upvotes: 0, downvotes: 0, owner: "0x1234567890123456789012345678901234567890", creationDate: "153399", description: "0x00"
             }; 
