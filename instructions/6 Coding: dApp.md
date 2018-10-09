@@ -7,6 +7,8 @@ Let's use our DReddit JS Object, and the `EmbarkJS` API to interact with our con
 ```
 import EmbarkJS from 'Embark/EmbarkJS';
 import web3 from 'Embark/web3';
+import DReddit from 'Embark/contracts/DReddit';
+
 ```
 > Both EmbarkJS and web3 are normally imported whenever there's a need to interact with web3 technologies. You'll see these imports present in both `App.js` and `Post.js`
 

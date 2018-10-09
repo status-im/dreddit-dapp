@@ -30,11 +30,18 @@ contract("DReddit contract", function () {
   this.timeout(0);
 
   it("should be able to create a post and receive it via contract event", async function () {    
-    // TODO: 
+    let receipt = await create(web3.utils.fromAscii(ipfsHash)).send();
+
+    const event = receipt.events.NewPost;
+
+    postId = event.returnValues.postId;
+    assert.equal(web3.utils.toAscii(event.returnValues.description), ipfsHash);
   });
 
   it("post should have correct data", async function (){
-    // TODO: 
+    const post = await posts(postId).call();
+    assert.equal(web3.utils.toAscii(post.description), ipfsHash);
+    assert.equal(post.owner, accounts[0]);
   });
 
   it("one post should be registered", async function () {
@@ -59,7 +66,12 @@ contract("DReddit contract", function () {
   });
 
   it("should't be able to vote twice", async function () {
-    // TODO: 
+    try {
+      const receipt = await vote(postId, 1).send();
+      assert.fail('should have reverted before');
+    } catch (error){
+        assert(error.message.search('revert') > -1, 'Revert should happen');
+    }
   });
 
 });

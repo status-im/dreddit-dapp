@@ -60,7 +60,7 @@ class Header extends Component {
           <AppBar position="fixed">
             <Toolbar className={classes.toolBar}>
               <Hidden smDown>
-                <Typography variant="display1" color="inherit" className={classes.flex}>
+                <Typography variant="h4" color="inherit" className={classes.flex}>
                 DReddit
                 </Typography>
               </Hidden>
@@ -69,9 +69,9 @@ class Header extends Component {
                 style={{
                   margin: '10px 10px',
                   maxWidth: 280
-                }}
+                }} 
                 onChange={(searchValue) => search(searchValue)}
-              />
+               />
               <Button color="inherit" onClick={toggleForm}>
                 <AddIcon />
               </Button>
