@@ -8,8 +8,8 @@ import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
 
 import EmbarkJS from 'Embark/EmbarkJS';
-import DReddit from 'Embark/contracts/DReddit';
 import web3 from 'Embark/web3';
+import DReddit from 'Embark/contracts/DReddit';
 
 const styles = theme => ({
   textField: {
@@ -60,7 +60,7 @@ class Create extends Component{
     // Send the transaction
     const receipt = await toSend.send({from: web3.eth.defaultAccount, 
                                        gas: estimatedGas + 1000});
-    
+
     console.log(receipt);
 
     this.setState({
