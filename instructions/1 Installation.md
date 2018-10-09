@@ -12,10 +12,10 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | 
 nvm install --lts
 nvm use lts
 ```
-#### IPFS 0.4.15+
+#### IPFS 0.4.17+
 ```
 ipfs version
-> 0.4.15+
+> 0.4.17+
 ```
 [IPFS installation instructions](https://ipfs.io/docs/install/#installing-from-a-prebuilt-package), macOS/Linux command provided for you below:
 ```
@@ -25,29 +25,29 @@ cd go-ipfs
 ipfs init
 ```
 
-#### Go-ethereum 1.8.11+
+#### Go-ethereum 1.8.15+
 ```
 geth version
-> 1.8.11+
+> 1.8.15+
 ```
 If you need to [install `geth`](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum), you can use the below for macOS:
 ```
 brew tap ethereum/ethereum
 brew install ethereum
 ```
-## Installing Embark 3.1.7
+## Installing Embark 3.2.2
 If you already have Embark installed, please run: 
 ```
 embark version
 ```
 
-Make sure the version is `3.1.7`. If it’s not, re-install Embark by running:
+Make sure the version is `3.2.2`. If it’s not, re-install Embark by running:
 ```
 npm install -g embark
 ```
 > Do not use sudo when installing Embark
 
-Re-run `embark version` to ensure we have `3.1.7`. 
+Re-run `embark version` to ensure we have `3.2.2`. 
 
 If you have not installed Embark at all, Embark can be installed by running
 `npm install -g embark` (without sudo)

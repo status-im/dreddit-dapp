@@ -5,9 +5,12 @@ Now that we finished building our dApp, we need to deploy it. We'll deploy our c
 Let's edit`./config/contracts.js` to add a testnet section that will contain our contract deployment settings. Embark supports different types of configurations for [deployment](https://embark.status.im/docs/contracts.html#Deployer-Account) of smart contracts. For this particular tutorial, we will use a private key that contains Ropsten ETH:
 ```
 "testnet": {
-    dappConnection: ["$WEB3"],
+    dappConnection: [
+      "$WEB3"
+    ],
+    deployment: {
         accounts: [{
-            privateKey: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef" // <-- Use your PK
+            privateKey: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef" // <-- Change this line for using your private key, mnemonics, o private key file. See docs for examples
         }]
 }
 ```
