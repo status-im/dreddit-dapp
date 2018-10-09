@@ -3,7 +3,7 @@ Now that we finished coding our contract, we can proceed to build unit testing f
 
 ### We should be able to create a post and receive it via contract event
 ```
-    let receipt = await create(web3.utils.fromAscii(ipfsHash)).send();
+    let receipt = await DReddit.methods.create(web3.utils.fromAscii(ipfsHash)).send();
     const event = receipt.events.NewPost;
     postId = event.returnValues.postId;
     assert.equal(web3.utils.toAscii(event.returnValues.description), ipfsHash);
@@ -13,7 +13,7 @@ Now that we finished coding our contract, we can proceed to build unit testing f
 
 ### The post should have correct data
 ```
-    const post = await posts(postId).call();
+    const post = await DReddit.methods.posts(postId).call();
     assert.equal(web3.utils.toAscii(post.description), ipfsHash);
     assert.equal(post.owner, accounts[0]);
 ```
@@ -22,7 +22,7 @@ Now that we finished coding our contract, we can proceed to build unit testing f
 ### We should't be able to vote twice for the same post
 ```
     try {
-      const receipt = await vote(postId, 1).send();
+      const receipt = await DReddit.methods.vote(postId, 1).send();
       assert.fail('should have reverted before');
     } catch (error){
         assert(error.message.search('revert') > -1, 'Revert should happen');
