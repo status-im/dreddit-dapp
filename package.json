@@ -6,7 +6,7 @@
     "test": "embark test"
   },
   "author": "",
-  "license": "MIT",
+  "license": "ISC",
   "homepage": "",
   "devDependencies": {
     "babel-eslint": "^8.2.6",
