@@ -37,7 +37,7 @@ contract("DReddit contract", function () {
   });
 
   it("post should have correct data", async function (){
-    const post = await DReddit.methods.posts(postId.toString()).call();
+    const post = await DReddit.methods.posts(postId).call();
     assert.equal(web3.utils.toAscii(post.description), ipfsHash);
     assert.equal(post.owner, accounts[0]);
   });
