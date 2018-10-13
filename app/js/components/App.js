@@ -1,11 +1,19 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import Create from './Create';
 import Header from './Header';
 import Post from './Post';
 import _ from 'lodash';
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 
 import EmbarkJS from 'Embark/EmbarkJS';
 import DReddit from 'Embark/contracts/DReddit';
+
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+    suppressDeprecationWarnings: true
+  }
+});
 
 class App extends Component {
 
@@ -75,12 +83,11 @@ class App extends Component {
       orderedList = _.orderBy(list, 'creationDate', sortOrder);
     }
 
-    return (<Fragment>
+    return <MuiThemeProvider theme={theme}>
         <Header toggleForm={this._toggleForm} sortOrder={this._setSortOrder} search={this._search} />
         { displayForm && <Create afterPublish={this._loadPosts} /> }
         { orderedList.map((record) => <Post key={record.id} {...record} filterBy={filterBy} />) }
-        </Fragment>
-    );
+      </MuiThemeProvider>;
   }
 }
 
