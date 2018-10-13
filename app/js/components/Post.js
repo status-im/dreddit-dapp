@@ -133,7 +133,7 @@ class Post extends Component {
                 </IconButton>
               } />
             <CardContent>
-                <Typography variant="title"  className={classes.title}  gutterBottom>
+                <Typography variant="h6"  className={classes.title}  gutterBottom>
                 {title}
                 </Typography>
                 <Typography component="div" dangerouslySetInnerHTML={{__html: mdText}} />
